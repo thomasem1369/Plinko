@@ -11,13 +11,16 @@ board = [[" ", "P", " ", "P", " ", "P", " ", "P", " "],
          [" ", "P", " ", "P", " ", "P", " ", "P", " "],
          ["P", " ", "P", " ", "P", " ", "P", " ", "P"],
          [" ", "P", " ", "P", " ", "P", " ", "P", " "],
-         ["P", " ", "P", " ", "P", " ", "P", " ", "P"]]
+         ["P", " ", "P", " ", "P", " ", "P", " ", "P"],
+         [" ", "P", " ", "P", " ", "P", " ", "P", " "],
+         ["P", " ", "P", " ", "P", " ", "P", " ", "P"],
+         [" ", "P", " ", "P", " ", "P", " ", "P", " "]]
 
 # Multipliers
 slots = [5, 3, 1, 0.5, 0.2, 0.5, 1, 3, 5]
 
 
-# Check is bet is a valid integer
+# Check if bet is a valid integer
 while True:
     try:
         # Ask user how much money they would like to bet
@@ -34,30 +37,47 @@ while True:
         # This catches non-numeric inputs (like letters)
         print("Invalid input. Please enter a numeric value.")
 
-# Start from the middle of the board
-column = len(board[0]) // 2
+playing = True
 
-print("Dropping chip...")
+while playing:
+    
+    # Start from the middle of the board
+    column = len(board[0]) // 2
 
-# Simulate the chip falling through the board
-for row in range(len(board)):
+    print("Dropping chip...")
 
-    if board[row][column] == "P":
-        move = random.choice([-1, 1])
-        new_column = column + move
-        
-        if 0 <= new_column < len(board[0]):
-            column = new_column
-     
+    # Simulate the chip falling through the board
+    for row in range(len(board)):
 
-    print("Chip at row", row, "column", column)
-    time.sleep(1)
+        if board[row][column] == "P":
+            move = random.choice([-1, 1])
+            new_column = column + move
+            
+            if 0 <= new_column < len(board[0]):
+                column = new_column
+         
 
-# Final multiplier
-multiplier = slots[column]
-winnings = bet * multiplier
+        print("Chip at row", row, "column", column)
+        time.sleep(0.5)
 
-print("\n--- RESULT ---")
-print("Landed in slot", column)
-print("Multiplier:", multiplier)
-print("You won:${}".format(winnings))
+    # Final multiplier
+    multiplier = slots[column]
+    winnings = bet * multiplier
+
+    print("\n--- RESULT ---")
+    print("Landed in slot", column)
+    print("Multiplier:", multiplier)
+    print("You won:${}".format(winnings))
+
+    while True:
+        again = input("Would you like to continue? (y/n): ").strip().lower()
+
+        if again == "y":
+            break
+        elif again == "n":
+            print("Thanks for playing!")
+            playing = False
+            break
+        else:
+            print("Invalid input. Please enter 'y' or 'n'.")
+
