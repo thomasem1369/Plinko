@@ -3,10 +3,12 @@
 # Emma Thomas
 
 import random
+import time
 
 # CONSTANTS
 MAX_BET = 1000
 ROWS = 12
+START_BALANCE = 1000
 
 # Multipliers for the bottom slots
 slots = [5, 3, 1, 0.5, 0.2, 0.2, 0.5, 1, 3, 5, 3, 5]
@@ -29,7 +31,7 @@ def get_bet(balance):
                 print("You don't have that much money")
 
             else:
-                print(f"Bet of ${bet} accepted.")
+                print(f"Bet of ${bet:.2f} accepted.")
                 return bet
         # This checks for non-numeric inputs like letters
         except ValueError:
@@ -66,9 +68,10 @@ def draw_board(path, total_rows):
         for column in range(row + 1):
             if column == path[row]:
                 line += "● "
+                
             else:
                 line += "○ "
-
+                
         print(line)
 
 def calculate_payout(final_column, bet_amount):
@@ -83,12 +86,16 @@ def calculate_payout(final_column, bet_amount):
 
 
 def main():
+    """
+    Run the main part of the game
+    """
     balance = 1000  # starting money
     playing = True
 
     while playing and balance > 0:
 
         print("\n--- NEW ROUND ---")
+        print(f"Current balance: ${balance:.2f}")
         
         bet = get_bet(balance)
 
@@ -106,9 +113,13 @@ def main():
         print("You won: ${:.2f}".format(winnings))
         print("New balance: ${:.2f}".format(balance))
 
+        if balance < 1:
+            print("/n You do not have enough money to continue.")
+            break
+            
+
         while True:
             again = input("Play again? (y/n): ").strip().lower()
-
             if again == "y":
                 break
             elif again == "n":
@@ -118,8 +129,21 @@ def main():
             else:
                 print("Invalid input. Please enter 'y' or 'n'.")
 
+    # Calculates and prints the final balance and how much money you won or lost
+    profit = balance - START_BALANCE
 
-# Run the game
+    print("\n--- GAME OVER ---")
+    print("Final balance: ${:.2f}".format(balance))
+
+    if profit > 0:
+        print("You made a profit of ${:.2f}".format(profit))
+    elif profit < 0:
+        print("You lost ${:.2f}".format((profit)))
+    else:
+        print("You broke even.")
+
+
+# Call the game
 main()
 
 
