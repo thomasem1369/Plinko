@@ -13,6 +13,12 @@ START_BALANCE = 1000
 # Multipliers for the bottom slots
 slots = [5, 3, 1, 0.5, 0.2, 0.2, 0.5, 1, 3, 5, 3, 5]
 
+def player_profile():
+    name = input("Enter name: ")
+    location = input("Enter location: ")
+    high_score = input("Enter high score: ")
+    lifetime_losses = input("Enter lifetime losses: ")
+
 def get_bet(balance):
     """
     Ask user how much money they would like to bet
@@ -85,6 +91,7 @@ def calculate_payout(final_column, bet_amount):
     return multiplier, winnings
 
 
+# Main routine
 def main():
     """
     Run the main part of the game
@@ -144,7 +151,8 @@ def main():
 
 
 # Call the game
-main()
+if __name__ == "__main__":
+    main()
 
 
 
