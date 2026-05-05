@@ -9,15 +9,23 @@ import time
 MAX_BET = 1000
 ROWS = 12
 START_BALANCE = 1000
+WHALE_THRESHOLD = 500
 
 # Multipliers for the bottom slots
 slots = [5, 3, 1, 0.5, 0.2, 0.2, 0.5, 1, 3, 5, 3, 5]
 
-def player_profile():
+def create_player_profile():
     name = input("Enter name: ")
     location = input("Enter location: ")
-    high_score = input("Enter high score: ")
-    lifetime_losses = input("Enter lifetime losses: ")
+
+    return {
+        "name": name,
+        "location": location,
+        "high_score": 0,
+        "lifetime_losses": 0,
+        "target_ads": False
+    }
+
 
 def get_bet(balance):
     """
@@ -91,18 +99,32 @@ def calculate_payout(final_column, bet_amount):
     return multiplier, winnings
 
 
+
+def check_marketing_status(player_profile):
+    """
+    Check if player is a "whale"
+    """
+    if player_profile["lifetime_losses"] > WHALE_THRESHOLD:
+        print("VIP OFFER: Double your next deposit! Buy more credits now!")
+        player_profile["target_ads"] = True
+    else:
+        print("Keep playing to climb the leaderboard!")
+
+
 # Main routine
 def main():
     """
     Run the main part of the game
     """
-    balance = 1000  # starting money
+    player_profile = create_player_profile()
+    balance = START_BALANCE # starting money
     playing = True
 
     while playing and balance > 0:
 
         print("\n--- NEW ROUND ---")
-        print(f"Current balance: ${balance:.2f}")
+        print(f"Player: {player_profile['name']} ({player_profile['location']})")
+        print(f"Balance: ${balance:.2f}")
         
         bet = get_bet(balance)
 
@@ -114,11 +136,23 @@ def main():
         balance -= bet
         balance += winnings
 
+        # Loss tracking
+        if winnings < bet:
+            loss = bet - winnings
+            player_profile["lifetime_losses"] += loss
+
+        # High scpre update
+        if balance > player_profile["high_score"]:
+            player_profile["high_score"] = balance
+
         print("\n--- RESULT ---")
         print("Landed in slot:", final_column)
         print("Multiplier:", multiplier)
         print("You won: ${:.2f}".format(winnings))
         print("New balance: ${:.2f}".format(balance))
+
+        # Marketing check
+        check_marketing_status(player_profile)
 
         if balance < 1:
             print("/n You do not have enough money to continue.")
@@ -140,7 +174,9 @@ def main():
     profit = balance - START_BALANCE
 
     print("\n--- GAME OVER ---")
-    print("Final balance: ${:.2f}".format(balance))
+    print(f"High score: ${player_profile['high_score']:.2f}")
+    print(f"Lifetime losses: ${player_profile['lifetime_losses']:.2f}")
+    print(f"Target ads enabled: {player_profile['target_ads']}")
 
     if profit > 0:
         print("You made a profit of ${:.2f}".format(profit))
