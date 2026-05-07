@@ -3,7 +3,6 @@
 # Emma Thomas
 
 import random
-import time
 
 # CONSTANTS
 MAX_BET = 1000
@@ -14,7 +13,9 @@ WHALE_THRESHOLD = 500
 # Multipliers for the bottom slots
 slots = [5, 3, 1, 0.5, 0.2, 0.2, 0.5, 1, 3, 5, 3, 5]
 
+
 def create_player_profile():
+    """Asks user for information to create their profile."""
     name = input("Enter name: ")
     location = input("Enter location: ")
 
@@ -28,18 +29,17 @@ def create_player_profile():
 
 
 def get_bet(balance):
-    """
-    Ask user how much money they would like to bet
-    """
+    """Ask user how much money they would like to bet."""
     while True:
         try:
-            bet = float(input("Enter how much money you want to bet (you can not bet more than $1000): $"))
+            bet = float(input("Enter how much to bet"
+                              "(cannot exceed balance): $"))
             # Check for valid range
             if bet <= 0:
                 print("Please enter an amount greater than $0.")
 
             elif bet > MAX_BET:
-                print("You cannot bet more than $1000.")
+                print("You cannot bet more than your balance.")
 
             elif bet > balance:
                 print("You don't have that much money")
@@ -50,13 +50,10 @@ def get_bet(balance):
         # This checks for non-numeric inputs like letters
         except ValueError:
             print("Invalid input. Please enter a numeric value.")
-        
+
 
 def simulate_path(total_rows):
-    """
-    Simulate the ball path and return list of column positions
-    """
-
+    """Simulate the ball path and return list of column positions."""
     column = 0
     path = []
 
@@ -67,43 +64,36 @@ def simulate_path(total_rows):
             column += move
 
         path.append(column)
-        
+
     return path, column
 
-def draw_board(path, total_rows):
-    """
-    Print the plinko board
-    """
 
+def draw_board(path, total_rows):
+    """Print the plinko board."""
     for row in range(total_rows):
         spaces = " " * (total_rows - row)
         line = spaces
-        
+
         for column in range(row + 1):
             if column == path[row]:
                 line += "● "
-                
+
             else:
                 line += "○ "
-                
+
         print(line)
 
-def calculate_payout(final_column, bet_amount):
-    """
-    Calculate winnings based on final column
-    """
 
+def calculate_payout(final_column, bet_amount):
+    """Calculate winnings based on final column."""
     multiplier = slots[final_column]
     winnings = bet_amount * multiplier
-    
+
     return multiplier, winnings
 
 
-
 def check_marketing_status(player_profile):
-    """
-    Check if player is a "whale"
-    """
+    """Check if player is a 'whale'."""
     if player_profile["lifetime_losses"] > WHALE_THRESHOLD:
         print("VIP OFFER: Double your next deposit! Buy more credits now!")
         player_profile["target_ads"] = True
@@ -113,19 +103,18 @@ def check_marketing_status(player_profile):
 
 # Main routine
 def main():
-    """
-    Run the main part of the game
-    """
+    """Run the main part of the game."""
     player_profile = create_player_profile()
-    balance = START_BALANCE # starting money
+    balance = START_BALANCE  # starting money
     playing = True
 
     while playing and balance > 0:
 
         print("\n--- NEW ROUND ---")
-        print(f"Player: {player_profile['name']} ({player_profile['location']})")
+        print(f"Player: {player_profile['name']}"
+              "({player_profile['location']})")
         print(f"Balance: ${balance:.2f}")
-        
+
         bet = get_bet(balance)
 
         path, final_column = simulate_path(ROWS)
@@ -157,8 +146,8 @@ def main():
         if balance < 1:
             print("/n You do not have enough money to continue.")
             break
-            
 
+        # Asks if user would like to play again
         while True:
             again = input("Play again? (y/n): ").strip().lower()
             if again == "y":
@@ -170,7 +159,7 @@ def main():
             else:
                 print("Invalid input. Please enter 'y' or 'n'.")
 
-    # Calculates and prints the final balance and how much money you won or lost
+    # Final stats screen
     profit = balance - START_BALANCE
 
     print("\n--- GAME OVER ---")
@@ -189,7 +178,3 @@ def main():
 # Call the game
 if __name__ == "__main__":
     main()
-
-
-
-
