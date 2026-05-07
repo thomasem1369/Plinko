@@ -5,7 +5,6 @@
 import random
 
 # CONSTANTS
-MAX_BET = 1000
 ROWS = 12
 START_BALANCE = 1000
 WHALE_THRESHOLD = 500
@@ -15,10 +14,12 @@ slots = [5, 3, 1, 0.5, 0.2, 0.2, 0.5, 1, 3, 5, 3, 5]
 
 
 def create_player_profile():
-    """Asks user for information to create their profile."""
+    """Asks user for information to create and return their profile."""
+    # Get user name and location
     name = input("Enter name: ")
     location = input("Enter location: ")
 
+    # Stores user data
     return {
         "name": name,
         "location": location,
@@ -30,26 +31,26 @@ def create_player_profile():
 
 def get_bet(balance):
     """Ask user how much money they would like to bet."""
+    bet = float(input(f"Enter how much to bet (max ${balance:.2f}): $"))
     while True:
         try:
-            bet = float(input("Enter how much to bet"
-                              "(cannot exceed balance): $"))
-            # Check for valid range
+            # Check for valid range (higher than 0)
             if bet <= 0:
                 print("Please enter an amount greater than $0.")
 
-            elif bet > MAX_BET:
-                print("You cannot bet more than your balance.")
-
+            # If bet is higher tha ntheir avalable balance:
             elif bet > balance:
-                print("You don't have that much money")
+                print("You cannot bet more than your current balance.")
 
+            # When bet is valid:
             else:
                 print(f"Bet of ${bet:.2f} accepted.")
                 return bet
+
         # This checks for non-numeric inputs like letters
         except ValueError:
             print("Invalid input. Please enter a numeric value.")
+
 
 
 def simulate_path(total_rows):
@@ -57,6 +58,7 @@ def simulate_path(total_rows):
     column = 0
     path = []
 
+    # Random generator for ball path
     for row in range(total_rows):
 
         if row > 0:
@@ -70,10 +72,12 @@ def simulate_path(total_rows):
 
 def draw_board(path, total_rows):
     """Print the plinko board."""
+    # Creates plinko board
     for row in range(total_rows):
         spaces = " " * (total_rows - row)
         line = spaces
 
+        # "● " is the ball and "○ " are the pins for each row
         for column in range(row + 1):
             if column == path[row]:
                 line += "● "
@@ -85,15 +89,16 @@ def draw_board(path, total_rows):
 
 
 def calculate_payout(final_column, bet_amount):
-    """Calculate winnings based on final column."""
-    multiplier = slots[final_column]
-    winnings = bet_amount * multiplier
+    """Calculate and return multiplier and winnings based on final column."""
+    multiplier = slots[final_column]    # Retrieves multiplier
+    winnings = bet_amount * multiplier  # Calculates amount won
 
     return multiplier, winnings
 
 
 def check_marketing_status(player_profile):
     """Check if player is a 'whale'."""
+    # Prints ad when player is eligible
     if player_profile["lifetime_losses"] > WHALE_THRESHOLD:
         print("VIP OFFER: Double your next deposit! Buy more credits now!")
         player_profile["target_ads"] = True
@@ -105,14 +110,14 @@ def check_marketing_status(player_profile):
 def main():
     """Run the main part of the game."""
     player_profile = create_player_profile()
-    balance = START_BALANCE  # starting money
+    balance = START_BALANCE  # Starting money
     playing = True
 
     while playing and balance > 0:
 
+        # Opening screen for each round
         print("\n--- NEW ROUND ---")
-        print(f"Player: {player_profile['name']}"
-              "({player_profile['location']})")
+        print(f"Player: {player_profile['name']} ({player_profile['location']})")
         print(f"Balance: ${balance:.2f}")
 
         bet = get_bet(balance)
@@ -167,10 +172,12 @@ def main():
     print(f"Lifetime losses: ${player_profile['lifetime_losses']:.2f}")
     print(f"Target ads enabled: {player_profile['target_ads']}")
 
+    # Checks user profits
     if profit > 0:
         print("You made a profit of ${:.2f}".format(profit))
     elif profit < 0:
-        print("You lost ${:.2f}".format((profit)))
+        # Absolute value returns positive integer for printing
+        print("You lost ${:.2f}".format(abs(profit)))
     else:
         print("You broke even.")
 
